@@ -34,7 +34,9 @@ app.get('/', (req, res) => {
 //Utilizaremos faker para poblar de informacion más consisa a  un catalogo de productos
 app.get('/products', (req, res) => {
 const products = [];
-for (let index = 0; index < 100; index++) {
+const { size } = req.query;
+const limit = size || 10;
+for (let index = 0; index < limit; index++) {
     products.push({
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price(), 10),
