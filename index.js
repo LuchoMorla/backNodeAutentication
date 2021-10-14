@@ -1,8 +1,6 @@
 const expressModule = require('express');
+const routerApi = require('./routes');
 const app = expressModule();
-
-
-const faker = require('faker');
 
 const puerto = 6969;
 
@@ -31,41 +29,6 @@ app.get('/', (req, res) => {
     });
 }) */
 
-//Utilizaremos faker para poblar de informacion más consisa a  un catalogo de productos
-app.get('/products', (req, res) => {
-const products = [];
-const { size } = req.query;
-const limit = size || 10;
-for (let index = 0; index < limit; index++) {
-    products.push({
-        name: faker.commerce.productName(),
-        price: parseInt(faker.commerce.price(), 10),
-        image: faker.image.imageUrl(),
-    });
-}
-res.json(products);
-});
-
-app.get('/categories/:categoryId/productos/:productosId', (req, res) => {
-    const { categoryId, productosId } = req.params;
-    res.json({
-        categoryId,
-        productosId,
-    });
-})
-
-/*// Vamos a recibir parametros tipo Query*/
-app.get('/users', (req, res) => {
-    const { limit, offset } = req.query;
-    if (limit && offset) {
-        res.json({
-            limit,
-            offset
-        });
-    } else {
-        res.send('OHH!!! No hay parametros');
-    }
-})
 
 app.listen(puerto, () => {
     console.log('Mi port is ' + puerto)
@@ -74,3 +37,5 @@ app.listen(puerto, () => {
 /*     lo que es lo mismo que:
     console.log("lestening at http://localhost:" + puerto) */
 });
+
+routerApi(app);
