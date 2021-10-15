@@ -4,6 +4,9 @@ const app = expressModule();
 
 const puerto = 6969;
 
+// implementamos el middleware nativo de express
+app.use(expressModule.json());
+
 app.get('/', (req, res) => {
     res.send('Hola mi server en express </br> <a href="http://localhost:6969/products">link productos</a>');
 });

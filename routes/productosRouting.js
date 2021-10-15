@@ -20,4 +20,35 @@ router.get('/', (req, res) => {
 
 //ejemplo para que no haya confusion en evitar errores
 
+// Metodo Post:
+
+router.post('/', (req, res) => {
+    const body = req.body;
+    res.json({
+        message: 'created',
+        data: body
+    });
+});
+
+// Metodo patch para los update, podriamos hacer lo mismo con put pero nos vamos a quedar con patch
+router.patch('/:id', (req, res) => {
+    const { id } = req.params;
+    const body = req.body;
+    res.json({
+        message: 'Update',
+        data: body,
+        id,
+    });
+});
+
+// Metodo delete para los update, podriamos hacer lo mismo con put pero nos vamos a quedar con patch
+router.delete('/:id', (req, res) => {
+    const { id } = req.params;
+    res.json({
+        message: 'Deleted',
+        id,
+    });
+});
+
+
     module.exports = router;
