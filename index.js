@@ -1,5 +1,9 @@
 const expressModule = require('express');
 const routerApi = require('./routes');
+
+//Los middlewares del tipo error se deben crear despues de establecer el routing de nuestra aplicacion
+const { logErrors, errorHandler } = require('./middlewares/errorsHandler');
+
 const app = expressModule();
 
 const puerto = 6969;
@@ -32,6 +36,13 @@ app.get('/', (req, res) => {
     });
 }) */
 
+routerApi(app);
+
+//Vamos a adicionar los middlewares de correccion de errores, hay que tener mucha delicadeza con el orden de definicion de los errores, el momento en que se los ejecuta, como una cadena
+app.use(logErrors);
+app.use(errorHandler);
+
+
 
 app.listen(puerto, () => {
     console.log('Mi port is ' + puerto)
@@ -40,5 +51,3 @@ app.listen(puerto, () => {
 /*     lo que es lo mismo que:
     console.log("lestening at http://localhost:" + puerto) */
 });
-
-routerApi(app);
