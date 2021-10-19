@@ -81,16 +81,17 @@ router.patch('/:id', async (req, res) => {
     const body = req.body;
     const product = await service.update(id, body);
     res.json(product);
-} catch {
-    res.status(404).json({
-        message: error.message
-    });
-}
-/*     res.json({
+    /*     res.json({
         message: 'Update',
         data: body,
         id,
     }); */
+} catch {
+    next(error);
+/*     res.status(404).json({
+        message: error.message
+    }); */
+}
 });
 
 // Metodo delete para los update, podriamos hacer lo mismo con put pero nos vamos a quedar con patch

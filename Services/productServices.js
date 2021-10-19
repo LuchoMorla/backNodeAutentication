@@ -1,4 +1,5 @@
 const faker = require('faker');
+const boom = require('@hapi/boom');
 
 class ProductsService {
 
@@ -16,6 +17,8 @@ class ProductsService {
                 name: faker.commerce.productName(),
                 price: parseInt(faker.commerce.price(), 10),
                 image: faker.image.imageUrl(),
+                //Nos crearemos el supuesto de que tuvieramos que utilizar un bloqueo de permiso para productos que se pueden o no presentar a un determinado cliente
+                isBlock: faker.datatype.boolean(),
             });
         }
     }
@@ -30,17 +33,32 @@ class ProductsService {
     }
 
     async find() {
-        return this.products;
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(this.products);
+            }, 1000);
+        });
+        // Antes solo era un simple return this.products... :') como ah crecido la promesa!!!
     }
 
     async findOne(id) {
-        return this.products.find(item => item.id === id);
+        const product = this.products.find(item => item.id === id);
+        if (!product) {
+            throw boom.notFound('Product not found');
+        }
+        //vamos a crear un bloqueo para los casos de productos bloqueados, seria algo de logica de negocio..sera un error del tipo conflicto
+        if (product.isBlock) {
+            throw boom.conflict('Product is block');
+        }
+        return product;
     }
 
     async update(id, changes) {
         const index = this.products.findIndex(item => item.id === id);
         if (index === -1) {
-            throw new Error('product not found');
+            /* Comenzaremos a utilizar Boom!! y a manipular los errores de una forma diferente
+            throw new Error('product not found'); */
+            throw boom.notFound('Product not found');
         }
         const product = this.products[index];
         this.products[index] = {
@@ -53,7 +71,7 @@ class ProductsService {
     async delete(id) {
         const index = this.products.findIndex(item => item.id === id);
         if (index === -1) {
-            throw new Error('product not found');
+            throw boom.notFound('Producto not found');
         }
         this.products.splice(index, 1);
         return {message: true, id}

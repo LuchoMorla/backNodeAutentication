@@ -2,7 +2,7 @@ const expressModule = require('express');
 const routerApi = require('./routes');
 
 //Los middlewares del tipo error se deben crear despues de establecer el routing de nuestra aplicacion
-const { logErrors, errorHandler } = require('./middlewares/errorsHandler');
+const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/errorsHandler');
 
 const app = expressModule();
 
@@ -40,6 +40,7 @@ routerApi(app);
 
 //Vamos a adicionar los middlewares de correccion de errores, hay que tener mucha delicadeza con el orden de definicion de los errores, el momento en que se los ejecuta, como una cadena
 app.use(logErrors);
+app.use(boomErrorHandler);
 app.use(errorHandler);
 
 
