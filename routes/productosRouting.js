@@ -2,6 +2,9 @@ const expressModule = require('express');
 //const faker = require('faker');
 const ProductsService = require('./../Services/productServices');
 
+const validatorHandler = require('../middlewares/validatorHandler');
+const { createProductSchema, updateProductSchema, getProductSchema } = require('../schemaODtos/productSchema');
+
 const router = expressModule.Router();
 
 //Como es una clase, creamos una instancia del servicio:
@@ -52,22 +55,27 @@ router.get('/filter', (req, res) => {
             price: 2000
         });
     } */
-router.get('/:id', async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const product = await service.findOne(id);
-        res.json(product);
-    } catch (error) {
-        next(error);
-    }
+    
+router.get('/:id', 
+    validatorHandler(getProductSchema, 'params'),
+    async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const product = await service.findOne(id);
+            res.json(product);
+        } catch (error) {
+            next(error);
+        }
 });
 
 // Metodo Post:
 
-router.post('/', async (req, res) => {
-    const body = req.body;
-    const newProduct = await service.create(body);
-    res.status(201).json(newProduct);
+router.post('/',
+    validatorHandler(createProductSchema, 'body'),
+    async (req, res) => {
+        const body = req.body;
+        const newProduct = await service.create(body);
+        res.status(201).json(newProduct);
 /*     res.status(201).json({
         message: 'created',
         data: body
@@ -75,19 +83,22 @@ router.post('/', async (req, res) => {
 });
 
 // Metodo patch para los update, podriamos hacer lo mismo con put pero nos vamos a quedar con patch
-router.patch('/:id', async (req, res) => {
-    try {
-    const { id } = req.params;
-    const body = req.body;
-    const product = await service.update(id, body);
-    res.json(product);
-    /*     res.json({
-        message: 'Update',
-        data: body,
-        id,
-    }); */
-} catch {
-    next(error);
+router.patch('/:id', 
+    validatorHandler(getProductSchema, 'params'),
+    validatorHandler(updateProductSchema, 'body'),
+    async (req, res) => {
+        try {
+        const { id } = req.params;
+        const body = req.body;
+        const product = await service.update(id, body);
+        res.json(product);
+        /*     res.json({
+            message: 'Update',
+            data: body,
+            id,
+        }); */
+    } catch {
+        next(error);
 /*     res.status(404).json({
         message: error.message
     }); */
