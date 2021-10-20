@@ -1,5 +1,6 @@
 const expressModule = require('express');
 const routerApi = require('./routes');
+const cors = require('cors');
 
 //Los middlewares del tipo error se deben crear despues de establecer el routing de nuestra aplicacion
 const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/errorsHandler');
@@ -8,7 +9,7 @@ const app = expressModule();
 
 const puerto = 6969;
 
-// implementamos el middleware nativo de express
+// implementamos el middleware nativo de express para exportar archivos en formato json
 app.use(expressModule.json());
 
 app.get('/', (req, res) => {
@@ -37,6 +38,19 @@ app.get('/', (req, res) => {
 }) */
 
 routerApi(app);
+
+// implementando CORS para los dominios
+const whitelist = ['http://localhost:8080/frontend.html', 'https://myapp.co', 'http://localhost:6969/products', 'http://localhost:6969', 'file:///C:/Users/luis-/Documents/cursosPlatzi/listadoCursosCursados/backend/node-ApiRest-Express/storeApi/frontend.html'];
+const options = {
+    origin: (origin, callback) => {
+        if (whitelist.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitidation, dont do it againo!'));
+        }
+    }
+}
+app.use(cors(options));
 
 //Vamos a adicionar los middlewares de correccion de errores, hay que tener mucha delicadeza con el orden de definicion de los errores, el momento en que se los ejecuta, como una cadena
 app.use(logErrors);
