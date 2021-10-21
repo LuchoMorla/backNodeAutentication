@@ -7,7 +7,7 @@ const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/err
 
 const app = expressModule();
 
-const puerto = 6969;
+const puerto = process.env.PORT || 6969;
 
 // implementamos el middleware nativo de express para exportar archivos en formato json
 app.use(expressModule.json());
@@ -40,10 +40,10 @@ app.get('/', (req, res) => {
 routerApi(app);
 
 // implementando CORS para los dominios
-const whitelist = ['http://localhost:8080/frontend.html', 'https://myapp.co', 'http://localhost:6969/products', 'http://localhost:6969', 'file:///C:/Users/luis-/Documents/cursosPlatzi/listadoCursosCursados/backend/node-ApiRest-Express/storeApi/frontend.html'];
+const whitelist = ['http://localhost:8080/frontend.html', 'http://localhost:6969/products', 'http://localhost:6969'];
 const options = {
     origin: (origin, callback) => {
-        if (whitelist.includes(origin)) {
+        if (whitelist.includes(origin) || !origin) {
             callback(null, true);
         } else {
             callback(new Error('No permitidation, dont do it againo!'));
