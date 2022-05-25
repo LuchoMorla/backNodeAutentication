@@ -13,7 +13,7 @@ const puerto = process.env.PORT || 6969;
 app.use(expressModule.json());
 
 app.get('/', (req, res) => {
-    res.send('Hola mi server en express </br> <a href="https://vast-temple-37338.herokuapp.com/products">link productos</a>');
+    res.send('Hola mi server en express </br> <a href="http://localhost:6969/api/v1/products">link productos</a>');
 });
 
  /*   // lo que mas vamos a usar es un formato json, por que al final vamos a hacer una API y vamos a comunicar datos a clientes de Frontend o aplicaciones que se encargan de renderizar la informacion,
