@@ -4,9 +4,9 @@ async function getConnection() {
     const client = new Client({
         host: 'localhost',
         port: 5432,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
+        user: `lucho`,
+        password: `admin123`,
+        database: `my_firStore`,
     });
     await client.connect();
     return client;

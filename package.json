@@ -9,9 +9,6 @@
     "start": "node index.js",
     "lint": "eslint"
   },
-  "exports": {
-    "libs": "./libs/*.js"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
