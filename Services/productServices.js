@@ -1,12 +1,17 @@
 const faker = require('faker');
 const boom = require('@hapi/boom');
 
+const sequelize = require('../libs/sequelize');
+
 class ProductsService {
 
     constructor() {
         this.products = [];
         //Vamos a decir que cada vez que corra una instancia del servicio, va a empezar y generar los productos:
         this.generate();
+        /*  ya no utilizamos consultas por medio del pool
+        this.pool = pool;
+        this.pool.on('error', (err) => console.error(err)); */
     }
     // será el metodo para generar con la datafake
     generate() {
@@ -33,12 +38,17 @@ class ProductsService {
     }
 
     async find() {
-        return new Promise((resolve) => {
+/*         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(this.products);
-            }, 1000);
-        });
+            }, 1000); 
+        }); */
         // Antes solo era un simple return this.products... :') como ah crecido la promesa!!!
+        const query = 'SELECT * FROM task';
+/*         const rta = await this.pool.query(query);
+        return rta.rows; */
+        const [ data ] = await sequelize.query(query);
+        return data;
     }
 
     async findOne(id) {
