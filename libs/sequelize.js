@@ -16,7 +16,8 @@ const sequelize = new Sequelize(URI, {
   });
   
   setupModels(sequelize);
-  
-  sequelize.sync();
+/*   Para adaptarme al entorno de producción, voy a dejar de utilizar el sync()
+para utilizar mejor las migraciones
+  sequelize.sync(); */
   
   module.exports = sequelize;
