@@ -1,7 +1,10 @@
 const faker = require('faker');
 const boom = require('@hapi/boom');
 
-const sequelize = require('../libs/sequelize');
+/* antes era asi const sequelize = require('../libs/sequelize'); 
+ const setupModels = require('../db/models'); */
+const { models } = require('../libs/sequelize');
+
 
 class ProductsService {
 
@@ -29,11 +32,14 @@ class ProductsService {
     }
 
     async create(data) {
-        const newProduct = {
+/*       Antes de hacer el llamado a la base de datos
+      const newProduct = {
             id: faker.datatype.uuid(),
             ...data
         }
         this.products.push(newProduct);
+        return newProduct; */
+        const newProduct = await models.Product.create(data);
         return newProduct;
     }
 
@@ -44,11 +50,17 @@ class ProductsService {
             }, 1000); 
         }); */
         // Antes solo era un simple return this.products... :') como ah crecido la promesa!!!
-        const query = 'SELECT * FROM task';
+/*               Se utilizaba antes para hacer consultas desde la base de datos
+  const query = 'SELECT * FROM task'; */
 /*         const rta = await this.pool.query(query);
         return rta.rows; */
-        const [ data ] = await sequelize.query(query);
-        return data;
+/*        Se utilizaba antes para hacer consultas desde la base de datos
+ const [ data ] = await sequelize.query(query);
+        return data; */
+        const products = await models.Product.findAll({
+            include: ['category'],
+        });
+        return products;
     }
 
     async findOne(id) {
