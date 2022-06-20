@@ -43,7 +43,7 @@ class ProductsService {
         return newProduct;
     }
 
-    async find() {
+    async find(query) {
 /*         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(this.products);
@@ -57,9 +57,15 @@ class ProductsService {
 /*        Se utilizaba antes para hacer consultas desde la base de datos
  const [ data ] = await sequelize.query(query);
         return data; */
-        const products = await models.Product.findAll({
+        const options = {
             include: ['category'],
-        });
+        }
+        const { limit, offset } = query;
+        if (limit && offset) {
+            options.limit = limit;
+            options.offset = offset;
+        }
+        const products = await models.Product.findAll(options);
         return products;
     }
 
