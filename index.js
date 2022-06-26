@@ -26,6 +26,9 @@ const options = {
 }
 app.use(cors(options));
 
+//importare el index.js de auth para los login
+require('./utils/auth');
+
 //administracion de primeras rutas
 
 app.get('/', (req, res) => {
