@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
     res.send('Hola mi server en express </br> <a href="http://localhost:6969/api/v1/products">link productos</a>');
 });
 
+// un ejemplo de protección de nuestra api con un key o apiKey de ejemplo
 app.get('/nueva-ruta', checkApiKey, (req, res) =>{
     res.send('hola, soy tu nueva ruta');
 });
