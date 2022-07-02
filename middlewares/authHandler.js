@@ -15,7 +15,7 @@ function checkAdminRole(req, res, next) {
     if (user.role === 'admin') {
       next();
     } else {
-      next(boom.unauthorized());
+      next(boom.forbidden('no tienes permiso para ejecutar esta acción'));
     }
   }
   
@@ -26,7 +26,7 @@ function checkAdminRole(req, res, next) {
       if (roles.includes(user.role)) {
         next();
       } else {
-        next(boom.unauthorized());
+        next(boom.forbidden('no tienes permiso para ejecutar esta acción'));
       }
     }
   }
