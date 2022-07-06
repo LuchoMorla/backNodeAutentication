@@ -19,6 +19,7 @@ class AuthService {
       throw boom.unauthorized();
     }
     delete user.dataValues.password;
+    delete user.dataValues.recoveryToken;
     return user;
   }
 
@@ -34,28 +35,53 @@ class AuthService {
     };
   }
 
-  async sendMail(email) {
+  async sendRecovery(email) {
     const user = await service.findByEmail(email);
     if (!user) {
       throw boom.unauthorized();
     }
+    const payload = { sub: user.id };
+    const token = jwt.sign(payload, config.temporalyJwtSecret, {expiresIn: '15min'});
+    const link = `http://myfrontend.com/recovery?token=${token}`;
+    await service.update(user.id, {recoveryToken: token});
+    const mail = {
+        from: config.smtpMail, // sender address
+        to: `${user.email}`, // list of receivers
+        subject: "Recuperacion de contraseña", // Subject line
+/*         text: "Hola santi", // plain text body   lo comente por que vamos a enviar solamente el html*/
+        html: `<p>Haz click <a href='${link}'>aquí</a> o ingresa al siguiente link para recuperar tu contraseña: =><b> ${link} </b></p><p>Este link expirara en 15 minutos </p>`, // html body
+    }
+    const rta = await this.sendMail(mail);
+    return rta;
+  }
+
+  async sendMail(infoMail) {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       secure: true, // true for 465, false for other ports
       port: 465,
       auth: {
-        user: config.sendmail,
-        pass: config.mailKey
+        user: config.smtpMail,
+        pass: config.smtpMailKey
       }
     });
-    await transporter.sendMail({
-      from: config.sendmail, // sender address
-      to: `${user.email}`, // list of receivers
-      subject: "Este es un nuevo correo", // Subject line
-      text: "Hola santi", // plain text body
-      html: "<b>Hola santi</b>", // html body
-    });
-    return { message:  `mail sent to ${user.email}` };
+    await transporter.sendMail(infoMail);
+    return { message:  `mail sent to ${infoMail.to}` };
+  }
+
+  async changePassword(token, newPassword) {
+    try {
+        const payload = jwt.verify(token, config.temporalyJwtSecret);
+        const user = await service.findOne(payload.sub);
+        if (user.recoveryToken !== token) {
+            throw boom.unauthorized();
+        }
+        const hash = await bcrypt.hash(newPassword, 10);
+        await service.update(user.id, {recoveryToken: null, password: hash});
+        return { message: 'password changed'}
+    } catch (error) {
+        throw boom.unauthorized();
+    }
   }
 }
 
